@@ -5,7 +5,7 @@ it is designed for html files to be run as EXEs.
 
 this is the installer source, for releases, vist the releases visit the releases branches:
 
-[installer]()
+[installer](https://github.com/ahhhhhhhhhhhhhhhhhhhhhh1/positron/tree/installer-release)
 
 [app builder]()
 
