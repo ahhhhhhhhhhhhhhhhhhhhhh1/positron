@@ -1,7 +1,9 @@
 OutFile "Positron Installer.exe"
 InstallDir "$PROGRAMFILES\positron"
+SilentInstall silent
 
 Section "Main"
+
     SetOutPath $INSTDIR
 
     File "positron.exe"
