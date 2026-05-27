@@ -3,6 +3,8 @@ Positron is an alternative to electron that installs itself in a set location ra
 
 it is designed for html files to be run as EXEs.
 
+this is the installer source code. 
+
 
 
 Uses [ungoogled chromium](https://github.com/ungoogled-software/ungoogled-chromium) for display.
