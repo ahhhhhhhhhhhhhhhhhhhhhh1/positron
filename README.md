@@ -10,7 +10,6 @@ this is the exe producer source code, and the release.
 requires:
 
 gcc on path (ask chatgpt)
-
 python
 
 
