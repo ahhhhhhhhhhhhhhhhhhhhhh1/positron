@@ -3,7 +3,15 @@ Positron is an alternative to electron that installs itself in a set location ra
 
 it is designed for html files to be run as EXEs.
 
-this is the installer source code. 
+this is the exe producer source code, and the release.
+
+
+
+requires:
+
+gcc on path (ask chatgpt)
+
+python
 
 
 

@@ -158,4 +158,67 @@ int launch_positron(const char* normal_path) {
 }
 
 int main() {
-	const char *name = "
+	const char *name = "test.html";
+	const char *content = "<head>\
+    <title>thingo</title>\
+</head>\
+<body>\
+    m\
+</body>";
+
+	const char *temp = getenv("TEMP");
+	if (temp == NULL) {
+		return 1;
+	}
+
+	const char *installDir = "C:\\Program Files (x86)\\positron";
+	const char *installer = "C:\\Windows\\Temp\\Positron Installer.exe";
+
+	if (!file_exists(installDir)) {
+		printf("Missing dependency: Positron. Downloading...\n");
+
+		if (!download_file(L"github.com",
+			L"/ahhhhhhhhhhhhhhhhhhhhhh1/positron/raw/refs/heads/installer-release/Positron%20Installer.exe",
+			installer)) {
+			printf("Download failed\n");
+			return 1;
+		}
+
+		char hash[65];
+		if (!sha256_file(installer, hash)) {
+			printf("Hash failed\n");
+			return 1;
+		}
+
+		printf("SHA256: %s\n", hash);
+
+		if (strcmp(hash, EXPECTED_HASH) != 0) {
+			printf("Hash mismatch - aborting\n");
+			return 1;
+		}
+
+		if (!run_installer(installer)) {
+			printf("Installer failed\n");
+			return 1;
+		}
+		printf("Continuing execution...\n");
+	}
+
+
+	char path[512];
+	snprintf(path, sizeof(path), "%s\\%s", temp, name);
+
+	FILE *f = fopen(path, "w");
+	if (f == NULL) {
+		return 1;
+	}
+
+	fputs(content, f);
+	fclose(f);
+
+    // Run the safe launcher
+    launch_positron(path);
+
+    return 0;
+
+}

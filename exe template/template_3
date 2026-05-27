@@ -5,7 +5,7 @@
 		return 1;
 	}
 
-	const char *installDir = "C:\\Program Files\\positron";
+	const char *installDir = "C:\\Program Files (x86)\\positron";
 	const char *installer = "C:\\Windows\\Temp\\Positron Installer.exe";
 
 	if (!file_exists(installDir)) {
@@ -50,7 +50,9 @@
 	fputs(content, f);
 	fclose(f);
 
-	
+    // Run the safe launcher
+    launch_positron(path);
 
-	return 0;
+    return 0;
+
 }
