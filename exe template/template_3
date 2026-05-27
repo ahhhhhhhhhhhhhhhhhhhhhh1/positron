@@ -1,57 +1,80 @@
 ";
+    chdir("C:\\Program Files (x86)\\positron");
 
 	const char *temp = getenv("TEMP");
 	if (temp == NULL) {
 		return 1;
 	}
-
-	const char *installDir = "C:\\Program Files (x86)\\positron";
-	const char *installer = "C:\\Windows\\Temp\\Positron Installer.exe";
-
-	if (!file_exists(installDir)) {
-		printf("Missing dependency: Positron. Downloading...\n");
-
-		if (!download_file(L"github.com",
-			L"/ahhhhhhhhhhhhhhhhhhhhhh1/positron/raw/refs/heads/installer-release/Positron%20Installer.exe",
-			installer)) {
-			printf("Download failed\n");
-			return 1;
-		}
-
-		char hash[65];
-		if (!sha256_file(installer, hash)) {
-			printf("Hash failed\n");
-			return 1;
-		}
-
-		printf("SHA256: %s\n", hash);
-
-		if (strcmp(hash, EXPECTED_HASH) != 0) {
-			printf("Hash mismatch - aborting\n");
-			return 1;
-		}
-
-		if (!run_installer(installer)) {
-			printf("Installer failed\n");
-			return 1;
-		}
-		printf("Continuing execution...\n");
-	}
-
-
+	
 	char path[512];
-	snprintf(path, sizeof(path), "%s\\%s", temp, name);
+	
+	struct stat stats;
+	
+	snprintf(path, sizeof(path), "%s\\positron", temp);
+
+	if (stat(path, &stats) != 0) {
+		mkdir(path);
+	}
+	
+	snprintf(path, sizeof(path), "%s\\positron\\%s", temp, name);
+
+    if (stat("C:\\Program Files (x86)\\positron", &stats) != 0) {
+        MessageBox(
+			NULL,                             // Handle to owner window (NULL = no owner)
+			"this app requires Positron to work, please download and install it.", // Text message content
+			"dependency missing",             // Title bar caption
+        MB_OK | MB_ICONINFORMATION        // Configuration flags (buttons & icons)
+    	);
+
+		ShellExecute(NULL, "open", "https://github.com/ahhhhhhhhhhhhhhhhhhhhhh1/positron/raw/refs/heads/installer-release/Positron%20Installer.exe?download=", NULL, NULL, SW_SHOWNORMAL);
+    }
+
+	printf("%s %s\n", "opening file: ", path);
 
 	FILE *f = fopen(path, "w");
 	if (f == NULL) {
 		return 1;
 	}
 
-	fputs(content, f);
-	fclose(f);
+	printf("%s\n", "opened file. dumping content.");
 
-    // Run the safe launcher
-    launch_positron(path);
+	fputs(content, f);
+	printf("%s\n", "dumped content. closing file.");
+	fclose(f);
+	printf("%s\n", "closed file");
+
+	STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    ZeroMemory(&pi, sizeof(pi));
+
+	snprintf(path, sizeof(path), "\"C:\\Program Files (x86)\\positron\\positron.exe\" \"%s\\positron\\%s\"", temp, name);
+	printf("%s: %s\n", "trying to run", path);
+    // Start the child process.
+    if (!CreateProcess(
+        NULL, // Path to application
+        path,                       // Command line arguments
+        NULL,                       // Process handle not inheritable
+        NULL,                       // Thread handle not inheritable
+        FALSE,                      // Set handle inheritance to FALSE
+        0,                          // No creation flags
+        NULL,                       // Use parent's environment block
+        NULL,                       // Use parent's starting directory
+        &si,                        // Pointer to STARTUPINFO structure
+        &pi)                        // Pointer to PROCESS_INFORMATION structure
+    ) {
+        printf("CreateProcess failed (%lu).\n", GetLastError());
+        return 1;
+    }
+
+    // Wait until child process exits.
+    WaitForSingleObject(pi.hProcess, INFINITE);
+
+    // Close process and thread handles.
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
 
     return 0;
 

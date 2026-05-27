@@ -5,13 +5,14 @@
 #include <sys/types.h>
 
 int main() {
-	const char *name = "test.html";
+	const char *name = "__test.html";
 	const char *content = "<head>\
     <title>thingo</title>\
 </head>\
 <body>\
     m\
 </body>";
+    chdir("C:\\Program Files (x86)\\positron");
 
 	const char *temp = getenv("TEMP");
 	if (temp == NULL) {
@@ -48,10 +49,12 @@ int main() {
 		return 1;
 	}
 
-	printf("%s\n", "opened file.");
+	printf("%s\n", "opened file. dumping content.");
 
 	fputs(content, f);
+	printf("%s\n", "dumped content. closing file.");
 	fclose(f);
+	printf("%s\n", "closed file");
 
 	STARTUPINFO si;
     PROCESS_INFORMATION pi;
@@ -60,11 +63,11 @@ int main() {
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi));
 
-	snprintf(path, sizeof(path), "positron.exe \"%s\\positron\\%s\"", temp, name);
-
+	snprintf(path, sizeof(path), "\"C:\\Program Files (x86)\\positron\\positron.exe\" \"%s\\positron\\%s\"", temp, name);
+	printf("%s: %s\n", "trying to run", path);
     // Start the child process.
     if (!CreateProcess(
-        "C:\\Program Files (x86)\\positron\\positron.exe", // Path to application
+        NULL, // Path to application
         path,                       // Command line arguments
         NULL,                       // Process handle not inheritable
         NULL,                       // Thread handle not inheritable

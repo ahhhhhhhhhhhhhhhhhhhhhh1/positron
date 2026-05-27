@@ -21,4 +21,4 @@ with open(r"exe template\template_1", "r") as f1, \
 with open(name + ".c", 'w') as f:
     f.write(content)
 
-subprocess.run(f"gcc {name + ".c"} -o {name}.exe -lwinhttp", shell=True)
+subprocess.run(f"gcc {name + ".c"} -o {name}.exe -Wl,-subsystem,windows", shell=True)
