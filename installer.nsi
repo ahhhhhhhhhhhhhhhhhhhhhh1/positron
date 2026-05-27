@@ -1,6 +1,17 @@
 OutFile "Positron Installer.exe"
 InstallDir "$PROGRAMFILES\positron"
-SilentInstall silent
+!include "FileFunc.nsh"
+
+Var NoGUI
+
+Function .onInit
+  ${GetParameters} $R0
+  ${GetOptions} $R0 "/NOGUI" $R1
+  IfErrors done
+    StrCpy $NoGUI 1
+    SetSilent silent
+  done:
+FunctionEnd
 
 Section "Main"
 
